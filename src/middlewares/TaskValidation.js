@@ -26,10 +26,23 @@ const TaskValidation = async (req, res, next) => {
     else {
         //Validação para não deixar uma tarefa ser cadastrada numa mesma data e horário de outra já existente da mesma máquina
         let exists;
-        exists = await TaskModel.findOne({
-            'when': { '$eq': new Date(when) },
-            'macaddress': { '$in': macaddress }
-        });
+
+        //Verifica se já existe a tarefa no banco de dados, em caso de update
+        //Em caso positivo, ele ignora o id que for igual para não aparecer a mensagem de erro
+        if (req.params.id) {
+            exists = await TaskModel.findOne({
+                '_id': { '$ne': req.params.id },
+                'when': { '$eq': new Date(when) },
+                'macaddress': { '$in': macaddress }
+            });
+        }
+
+        else {
+            exists = await TaskModel.findOne({
+                'when': { '$eq': new Date(when) },
+                'macaddress': { '$in': macaddress }
+            });
+        }
 
         if (exists)
             return res.status(400).json({ error: 'já existe uma tarefa nesse dia e horário!' });
