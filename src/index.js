@@ -11,6 +11,6 @@ server.use('/task', TaskRoutes);
 // });
 
 //Mensagem que aparece ao iniciar o servidor
-server.listen(3000, () => {
+server.listen(3333, () => {
     console.log("API online");
 });
